@@ -75,7 +75,7 @@ namespace HelloWorld
 
         public void DrawPentagon(XGraphics gfx)
         {
-            XRect backgroundRect = new XRect(20, page.Height * 0.15, page.Width - 40, page.Height * 0.4);
+            XRect backgroundRect = new XRect(20, page.Height * 0.15, page.Width - 40, page.Height * 0.425);
             gfx.DrawRoundedRectangle(new XSolidBrush(XColor.FromKnownColor(XKnownColor.Gray)),
                 backgroundRect,
                 new XSize(40, 40));
@@ -85,15 +85,24 @@ namespace HelloWorld
             double s1 = Math.Sin((2 * Math.PI) / 5);
             double s2 = Math.Sin((4 * Math.PI) / 5);
 
-            XPoint center = new XPoint(page.Width * 0.5, page.Height * 0.4);
-            XPoint top = new XPoint(page.Width * 0.5, page.Height * 0.225);
+            XPoint[] pentatPoints = new XPoint[5];
+
+            XPoint center = new XPoint(page.Width * 0.5, page.Height * 0.425);
+            XPoint top = new XPoint(page.Width * 0.5, page.Height * 0.25);
 
             double lengthOfLine = Distance(top, center);
-
             XPoint bottomLeft = new XPoint(center.X + (lengthOfLine * -s2), center.Y - (lengthOfLine * -c2));
             XPoint bottomRight = new XPoint(center.X + (lengthOfLine * s2), center.Y - (lengthOfLine * -c2));
             XPoint topLeft = new XPoint(center.X + (lengthOfLine * -s1), center.Y - (lengthOfLine * c1));
             XPoint topRight = new XPoint(center.X + (lengthOfLine * s1), center.Y - (lengthOfLine * c1));
+
+            pentatPoints[0] = top;
+            pentatPoints[1] = topRight;
+            pentatPoints[2] = bottomRight;
+            pentatPoints[3] = bottomLeft;
+            pentatPoints[4] = topLeft;
+
+            gfx.DrawPolygon(XBrushes.DimGray, pentatPoints, XFillMode.Winding);
 
             XPen scorePen = XPens.Yellow;
             XPen gaugePen = XPens.Green;
@@ -110,13 +119,13 @@ namespace HelloWorld
             XSize size = new XSize(50, 50);
             XSize ellipseSize = new XSize(10, 10);
             //Info Boxes
-            XImage rightKnee = XImage.FromFile(@"C:\Users\kevin\Desktop\PDFsharp\samples\Samples C#\Based on WPF\HelloWorld\Content\Left Knee Stability.png");
-            DrawPentaInfoBox(gfx, top + new XPoint(-25, -50), rightKnee, userParameters["LEFT Knee Stability"].Name); 
-            gfx.DrawRoundedRectangle(brush, new XRect(top.X - 25 ,top.Y - 50, 50, 40), ellipseSize);
-            gfx.DrawRoundedRectangle(brush, new XRect(topLeft.X - 75, topLeft.Y - 25, 50, 40), ellipseSize);
-            gfx.DrawRoundedRectangle(brush, new XRect(topRight.X + 25, topRight.Y - 25, 50, 40), ellipseSize);
-            gfx.DrawRoundedRectangle(brush, new XRect(bottomLeft.X - 75, bottomLeft.Y - 50, 50, 40), ellipseSize);
-            gfx.DrawRoundedRectangle(brush, new XRect(bottomRight.X + 25, bottomRight.Y - 50, 50, 40), ellipseSize);
+            XImage image = XImage.FromFile(@"C:\Users\kevin\Desktop\PDFsharp\samples\Samples C#\Based on WPF\HelloWorld\Content\Left Knee Stability.png");
+
+            DrawPentaInfoBox(gfx, top + new XPoint(-50, -75), image, userParameters["Tibia / Spine Angle"]);
+            DrawPentaInfoBox(gfx, topLeft + new XPoint(-100,-35), image, userParameters["LEFT Knee Stability"]);
+            DrawPentaInfoBox(gfx, topRight + new XPoint(25, -35), image, userParameters["RIGHT Knee Stability"]);
+            DrawPentaInfoBox(gfx, bottomRight + new XPoint(25, -60), image, userParameters["Pelvic Stability"]);
+            DrawPentaInfoBox(gfx, bottomLeft + new XPoint(-125, -60), image, userParameters["Depth of Squat"]);
 
             //percentage Lines
             gfx.DrawString(0 + "%", new XFont("Arial", 10), XBrushes.Black, center);
@@ -137,14 +146,19 @@ namespace HelloWorld
             gfx.DrawLine(scorePen, center, Interpolate(center, top, -0.5f));
         }
 
-        void DrawPentaInfoBox(XGraphics gfx, XPoint point, XImage image, string str)
+        void DrawPentaInfoBox(XGraphics gfx, XPoint point, XImage image, Parameter parameter)
         {
-            XBrush brush = XBrushes.Black;
+            double val = Convert.ToDouble(parameter.Value);
+            string str = parameter.Name;
+            XBrush brush = ChooseBrushColor(Convert.ToDouble(parameter.Percentage),
+                Convert.ToDouble(parameter.RedVal),
+                Convert.ToDouble(parameter.AmberVal));
             XSize ellipseSize = new XSize(10, 10);
 
-            gfx.DrawRoundedRectangle(brush, new XRect(point.X, point.Y, 50, 40), ellipseSize);
-            gfx.DrawString(str, new XFont("Arial", 12), XBrushes.White, point);
-            gfx.DrawImage(image, point + new XPoint(100, 0));
+            gfx.DrawRoundedRectangle(brush, new XRect(point.X, point.Y, 50, 50), ellipseSize);
+            gfx.DrawString(str, new XFont("Arial", 12), XBrushes.White, point + new XPoint(0,60));
+            gfx.DrawString(val.ToString() + "%", new XFont("Arial", 12), XBrushes.White, point + new XPoint(10,30));
+            gfx.DrawImage(image, new XRect(point + new XPoint(50,0),new XSize(50,50)));
         }
 
         XPoint Interpolate(XPoint pt1, XPoint pt2, float amount)
@@ -162,6 +176,17 @@ namespace HelloWorld
             double exes = p1.X - p2.X;
             double whys = p1.Y - p2.Y;
             return Math.Sqrt((exes * exes) + (whys * whys));
+        }
+
+        XBrush ChooseBrushColor(double value, double redVal, double amberVal)
+        {
+            if (value <= redVal)
+                return XBrushes.Red;
+            else if (value > redVal && value <= amberVal)
+                return XBrushes.Gold;
+
+            return XBrushes.Green;
+
         }
     }
 }
