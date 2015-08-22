@@ -12,7 +12,7 @@ namespace HelloWorld
         public double Value { get; set; }
         public double Percentage { get; set; }
         public string Color { get; set; }
-        public string LSI { get; set; }
+        public double LSI { get; set; }
         public double RedVal { get; set; }
         public double AmberVal { get; set; }
         public double GreenVal { get; set; }
@@ -20,5 +20,10 @@ namespace HelloWorld
 
         public Parameter()
         { }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

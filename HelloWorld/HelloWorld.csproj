@@ -78,6 +78,7 @@
     <Compile Include="..\..\Based on GDI+\HelloWorld\Program.cs">
       <Link>Program.cs</Link>
     </Compile>
+    <Compile Include="DoubleBar.cs" />
     <Compile Include="OHS_Page.cs" />
     <Compile Include="Parameter.cs" />
     <Compile Include="ProfileInfo.cs" />
@@ -121,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="Content\OHS Macro.xlsx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

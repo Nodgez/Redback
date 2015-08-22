@@ -185,10 +185,46 @@ namespace HelloWorld
         #region Bar Chart
         public void DrawBarCharts(XGraphics gfx)
         {
-            XRect backgroundRect = new XRect(20, page.Height * 0.585, page.Width - 40, page.Height * 0.4);
+            XPoint backgroundPoint = new XPoint(20, page.Height * 0.585);
+            XRect backgroundRect = new XRect(backgroundPoint.X, backgroundPoint.Y, page.Width - 40, page.Height * 0.41);
             gfx.DrawRoundedRectangle(new XSolidBrush(XColor.FromKnownColor(XKnownColor.Gray)),
                 backgroundRect,
                 new XSize(40, 40));
+
+            DoubleBar ShoulderFlexionBar = new DoubleBar(userParameters["LEFT Shoulder Flexion"], userParameters["RIGHT Shoulder Flexion"], gfx);
+            ShoulderFlexionBar.Draw(new XPoint(quaterWidth * 0.5  - 10,backgroundPoint.Y + 20),
+                backgroundRect, 
+                XImage.FromFile(@"C:\Users\kevin\Desktop\PDFsharp\samples\Samples C#\Based on WPF\HelloWorld\Content\Shoulder Flexion.png"));
+
+            DoubleBar hipFlexionBar = new DoubleBar(userParameters["LEFT Hip Flexion"], userParameters["RIGHT Hip Flexion"], gfx);
+            hipFlexionBar.Draw(new XPoint(quaterWidth * 2 - (quaterWidth * 0.5) - 10, backgroundPoint.Y + 20),
+                backgroundRect,
+                 XImage.FromFile(@"C:\Users\kevin\Desktop\PDFsharp\samples\Samples C#\Based on WPF\HelloWorld\Content\Hip Flexion.png"));
+
+            DoubleBar kneeFlexionBar = new DoubleBar(userParameters["LEFT Knee Flexion"], userParameters["RIGHT Knee Flexion"], gfx);
+            kneeFlexionBar.Draw(new XPoint(quaterWidth * 3 - (quaterWidth * 0.5) - 10, backgroundPoint.Y + 20),
+                backgroundRect,
+                XImage.FromFile(@"C:\Users\kevin\Desktop\PDFsharp\samples\Samples C#\Based on WPF\HelloWorld\Content\Knee Flexion.png"));
+
+
+            DoubleBar ankleFlexionBar = new DoubleBar(userParameters["LEFT Ankle Flexion"], userParameters["RIGHT Ankle Flexion"], gfx);
+            ankleFlexionBar.Draw(new XPoint(quaterWidth * 4 - (quaterWidth * 0.5) - 10, backgroundPoint.Y + 20),
+                backgroundRect,
+                XImage.FromFile(@"C:\Users\kevin\Desktop\PDFsharp\samples\Samples C#\Based on WPF\HelloWorld\Content\Ankle Flexion.png"));
+
+
+            XPoint top = new XPoint(backgroundPoint.X, backgroundPoint.Y + backgroundRect.Height * 0.2);
+            XPoint bottom = new XPoint(backgroundPoint.X, backgroundPoint.Y + backgroundRect.Height * 0.8);
+            for (int i = 11; i > 0; i--)
+            {
+                float increment = -i * 0.1f;
+                
+                XPoint percentagePoint = Interpolate(top, bottom, increment);
+                gfx.DrawString(((11 - i) * 10).ToString() + "%", new XFont("Arial", 8), XBrushes.Black, percentagePoint + new XPoint(5, 0));
+                gfx.DrawLine(XPens.Black, percentagePoint, percentagePoint + new XPoint(backgroundRect.Width, 0));
+
+            }
+
         }
         #endregion
 
