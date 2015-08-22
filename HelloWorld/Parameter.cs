@@ -9,13 +9,13 @@ namespace HelloWorld
     class Parameter
     {
         public string Name { get; set; }
-        public string Value { get; set; }
-        public string Percentage { get; set; }
+        public double Value { get; set; }
+        public double Percentage { get; set; }
         public string Color { get; set; }
         public string LSI { get; set; }
-        public string RedVal { get; set; }
-        public string AmberVal { get; set; }
-        public string GreenVal { get; set; }
+        public double RedVal { get; set; }
+        public double AmberVal { get; set; }
+        public double GreenVal { get; set; }
 
 
         public Parameter()
